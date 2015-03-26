@@ -1,18 +1,35 @@
 // test/test.js
 // Unit tests for gremlin-graphviz.
 
-describe ('gremlin-graphviz', function () {
+var _ = require('lodash');
+var BluePromise = require('bluebird');
+var chai = require('chai');
+var debug = require('debug');
+var glob = require('glob');
+var gremlinGraphviz = require('../lib/index.js');
+var heredoc = require('heredoc');
+var path = require('path');
+var tsTinkerpop = require('ts-tinkerpop');
+var xmldom = require('xmldom');
+var xpath = require('xpath');
 
-  var _ = require('lodash');
-  var chai = require('chai');
-  var expect = chai.expect;
-  var Gremlin = require('gremlin-v3');
-  var gremlin = new Gremlin();
-  var gremlinGraphviz = require('../lib/index.js');
-  var heredoc = require('heredoc');
-  var Q = require('q');
-  var xmldom = require('xmldom');
-  var xpath = require('xpath');
+var dlog = debug('gremlin-graphviz:test');
+var expect = chai.expect;
+
+var TP;
+
+before(function (done) {
+  dlog('BEFORE: global');
+
+  tsTinkerpop.getTinkerpop()
+    .then(function (tp) {
+      TP = tp;
+      dlog('TP initialized');
+      done();
+    });
+});
+
+describe ('gremlin-graphviz', function () {
 
   it ('loads via require', function () {
   });
@@ -26,25 +43,23 @@ describe ('gremlin-graphviz', function () {
   // Tests using an empty in-memory TinkerGraph database instance.
   describe ('with empty graph as input', function () {
 
-    var TinkerGraph = gremlin.java.import('com.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph');
-
-    var javaGraph;
     var graph;
 
     before(function () {
-      javaGraph = TinkerGraph.openSync();
-      expect(javaGraph).to.be.ok;
-      graph = gremlin.wrap(javaGraph);
-      expect(graph).to.be.ok;
+      dlog('BEFORE: with empty graph as input');
+      graph = TP.TinkerGraph.open();
+      expect(graph).to.exist;
     });
 
     after(function (done) {
-      graph = null;
-      if (javaGraph) {
-        javaGraph.close(function() {
-          javaGraph = null;
-          done();
-        });
+      if (graph) {
+        graph.closeP()
+          .then(function() {
+            graph = null;
+          })
+          .done(done);
+      } else {
+        done();
       }
     });
 
@@ -53,11 +68,11 @@ describe ('gremlin-graphviz', function () {
 
     it ('returns a promise', function () {
       var promise = gremlinGraphviz(graph);
-      expect(Q.isPromise(promise)).to.be.true;
+      expect(promise instanceof BluePromise).to.be.true;
     });
 
     it ('accepts promises', function (done) {
-      gremlinGraphviz(Q(graph), Q({}))
+      gremlinGraphviz(BluePromise.resolve(graph), BluePromise.resolve({}))
         .then(function (g) {
           expect(g).to.be.ok;
         })
@@ -102,25 +117,23 @@ describe ('gremlin-graphviz', function () {
   // Tests using the classic in-memory TinkerGraph database instance.
   describe ('with classic graph as input', function () {
 
-    var TinkerFactory = gremlin.java.import('com.tinkerpop.gremlin.tinkergraph.structure.TinkerFactory');
-
-    var javaGraph;
     var graph;
 
     before(function () {
-      javaGraph = TinkerFactory.createClassicSync();
-      expect(javaGraph).to.be.ok;
-      graph = gremlin.wrap(javaGraph);
-      expect(graph).to.be.ok;
+      dlog('BEFORE: with classic graph as input');
+      graph = TP.TinkerFactory.createClassic();
+      expect(graph).to.exist;
     });
 
     after(function (done) {
-      graph = null;
-      if (javaGraph) {
-        javaGraph.close(function() {
-          javaGraph = null;
-          done();
-        });
+      if (graph) {
+        graph.closeP()
+          .then(function() {
+            graph = null;
+          })
+          .done(done);
+      } else {
+        done();
       }
     });
 
