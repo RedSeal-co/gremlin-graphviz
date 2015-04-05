@@ -3,7 +3,7 @@ gremlin-graphviz
 
 Use Graphviz to visualize Gremlin graphs.
 
-This module is a mashup of [gremlin-v3](https://github.com/jimlloyd/gremlin-v3) and
+This module is a mashup of [ts-tinkerpop](http://github.lab.redseal.net/redseal/ts-tinkerpop) and
 [node-graphviz](https://github.com/glejeune/node-graphviz).
 
 ## Usage
@@ -14,10 +14,8 @@ Check out the unit tests for more, but here is a taste:
 
 ```js
 // Create a Gremlin graph with some data.
-var Gremlin = require('gremlin-v3');
-var gremlin = new Gremlin();
-var TinkerFactory = gremlin.java.import('com.tinkerpop.gremlin.tinkergraph.structure.TinkerFactory');
-var gremlinGraph = gremlin.wrap(TinkerFactory.createClassicSync());
+var TP = require('ts-tinkerpop');
+var gremlinGraph = TP.TinkerFactory.createClassic();
 
 // Create a Graphviz graph (promise) representing the Gremlin graph.
 var gremlinGraphviz = require('gremlin-graphviz');
