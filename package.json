@@ -45,6 +45,6 @@
     "debug": "^2.1.3",
     "graphviz": "0.0.8",
     "lodash": "^2.4.1",
-    "ts-tinkerpop": "git://github.lab.redseal.net/redseal/ts-tinkerpop.git#v1.0.3"
+    "ts-tinkerpop": "git://github.lab.redseal.net/redseal/ts-tinkerpop.git#v1.1.0"
   }
 }
