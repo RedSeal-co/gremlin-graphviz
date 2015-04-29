@@ -3,7 +3,6 @@ jdk:
   - oraclejdk8
 env:
   - NODE_VERSION="0.12"
-  - NODE_VERSION="0.10"
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y graphviz
