@@ -9,7 +9,7 @@
   "scripts": {
     "doc": "docco lib/*.js test/*.js",
     "lint": "jshint lib test",
-    "test": "mocha"
+    "test": "mocha --timeout 60s"
   },
   "repository": {
     "type": "git",
